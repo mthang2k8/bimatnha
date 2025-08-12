@@ -1,0 +1,343 @@
+<!-- 1. h1-h6 : heading
+     2. p : nội dung
+     3.img : hình ảnh
+     4.a : liên kết 
+     5.ul, li : danh sách 
+     6.table
+     7.input
+     8.button
+     9.div -->
+<!DOCTYPE html>
+<html lang="vi">
+    <!-- phần đầu -->
+    <head>
+        <title>mthang</title>
+        <meta charset="utf-8">
+    <style>
+        body {
+            background: radial-gradient(1200px 800px at 50% -10%, #ec51a6 0%, #d13a6d 60%, #e9193b 100%);
+            color: #e5e7eb;
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: rgba(235, 96, 193, 0.6);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(235, 113, 154, 0.35);
+            padding: 40px 32px 32px 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        .title {
+            text-align: center;
+            margin-bottom: 24px;
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #f3f4f6;
+            text-shadow: 0 0 24px rgba(255,255,255,0.08);
+        }
+        .mail-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 240px;
+            height: 56px;
+            background: linear-gradient(90deg, #dd2691 0%, #a855f7 100%);
+            border-radius: 32px;
+            box-shadow: 0 6px 18px rgba(99,102,241,0.25);
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+            margin-top: 16px;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+            border: 2px solid rgba(255,255,255,0.2);
+            gap: 12px;
+        }
+        .mail-link:hover {
+            transform: scale(1.05) translateY(-1px);
+            box-shadow: 0 10px 28px rgba(99,102,241,0.35);
+            background: linear-gradient(90deg, #7c83ff 0%, #bb78ff 100%);
+        }
+        .mail-icon {
+            width: 32px;
+            height: 32px;
+            margin-right: 8px;
+        }
+        #rain-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        #flash-overlay {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 2;
+        }
+        @keyframes flashBlink {
+            0% { opacity: 0; }
+            10% { opacity: 0.9; }
+            30% { opacity: 0; }
+            45% { opacity: 0.6; }
+            100% { opacity: 0; }
+        }
+        .flash-active {
+            animation: flashBlink 720ms ease-out;
+        }
+        .controls {
+            margin-top: 16px;
+            display: flex;
+            gap: 12px;
+        }
+        .toggle-btn {
+            background: #374151;
+            color: #e5e7eb;
+            border: 2px solid #9ca3af;
+            border-radius: 20px;
+            padding: 8px 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+        .toggle-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+            background: #4b5563;
+        }
+        .hint {
+            margin-top: 6px;
+            font-size: 0.9rem;
+            color: #d1d5db;
+            text-align: center;
+        }
+    </style>
+    </head>
+    <body>
+        <canvas id="rain-canvas"></canvas>
+        <div class="container">
+            <div class="title">Nhấp vào đây 📌</div>
+            <a href="https://panbap.github.io/galaxy-love/?images=https%3A%2F%2Fscontent.fdad1-2.fna.fbcdn.net%2Fv%2Ft51.82787-15%2F517863125_17971163459913031_6462587431843500718_n.jpg%3F_nc_cat%3D102%26ccb%3D1-7%26_nc_sid%3D127cfc%26_nc_ohc%3DEuyI4P6kseYQ7kNvwEMfCFS%26_nc_oc%3DAdmIoo4tNhUlxFn1BynqgINt8VNbgbd1dncRvjOFJKnKBeLuyjhTq8pVcht6BQKA5FI%26_nc_zt%3D23%26_nc_ht%3Dscontent.fdad1-2.fna%26_nc_gid%3DXZSwATQ4AN9Ao2zDoQfBWQ%26oh%3D00_AfU_dnEEEc7w700EX9c9RM9LPfIuuydeyNZZzHPWXrwZHw%26oe%3D68A12A3C%2Chttps%3A%2F%2Fscontent.fdad1-3.fna.fbcdn.net%2Fv%2Ft51.82787-15%2F516604652_17971163477913031_6377499070115081328_n.jpg%3F_nc_cat%3D104%26ccb%3D1-7%26_nc_sid%3D127cfc%26_nc_ohc%3DuqZYWf5haWQQ7kNvwEt2VJL%26_nc_oc%3DAdni7IL7EBvMxD8J_ZVzkG8Ihk7uiBrEQG7sy4wXKBO2l_RJtK-cQLhxH4CtBDTcCOE%26_nc_zt%3D23%26_nc_ht%3Dscontent.fdad1-3.fna%26_nc_gid%3DkGI0EjEh9L87YoiizG9BzA%26oh%3D00_AfXGg6SctUwoogKuhJMYs5g35GycxcmtNzD3bx6LItSVbw%26oe%3D68A133EC%2Chttps%3A%2F%2Fscontent.fdad1-4.fna.fbcdn.net%2Fv%2Ft51.75761-15%2F499905435_17965461173913031_1958374837412804716_n.jpg%3F_nc_cat%3D100%26ccb%3D1-7%26_nc_sid%3D127cfc%26_nc_ohc%3D1y2Y06O4NFsQ7kNvwGv0MzY%26_nc_oc%3DAdnhe13VqXWgJCkx4x6Thho4MnYIw4_kBFX34sLt9-4Ja6iMAkS5l13F_Wvw6BdrClI%26_nc_zt%3D23%26_nc_ht%3Dscontent.fdad1-4.fna%26_nc_gid%3DNIGh040dyXkDpkoRsn1UDA%26oh%3D00_AfXB6I6kIEdpl6uH--kP-Z4nWeidbKeODJAcSQBz43nSbQ%26oe%3D68A145D7%2Chttps%3A%2F%2Fscontent.fdad1-2.fna.fbcdn.net%2Fv%2Ft51.75761-15%2F475271015_17954704283913031_5268893988020575147_n.jpg%3F_nc_cat%3D106%26ccb%3D1-7%26_nc_sid%3D127cfc%26_nc_ohc%3DNfPgh7J4Lp0Q7kNvwGe3M89%26_nc_oc%3DAdkgYt2UnThEgQ8uvJqinuZp9yD8HEnNszTqfLRxDjwQoCTgehGIy_UHX6qmsrq___A%26_nc_zt%3D23%26_nc_ht%3Dscontent.fdad1-2.fna%26_nc_gid%3DB5QA3oC2nDB6xbuBdT1QTw%26oh%3D00_AfVXEyVOdJymXbSA17Ho49YJW0B8ENwGO8MIC7zMKeTzZQ%26oe%3D68A130D9%2Chttps%3A%2F%2Fscontent.fdad1-4.fna.fbcdn.net%2Fv%2Ft51.75761-15%2F467570860_17944181063913031_4319496641333771182_n.jpg%3F_nc_cat%3D105%26ccb%3D1-7%26_nc_sid%3D127cfc%26_nc_ohc%3DMG3Kmv-MkzYQ7kNvwGwQOUd%26_nc_oc%3DAdnEX0jxF-icFdLtIqlg4WKMhEgPb129Lv-D2McAVtfBdKCKgxBqjn-Sv9-CEXxmIa8%26_nc_zt%3D23%26_nc_ht%3Dscontent.fdad1-4.fna%26_nc_gid%3DiCPPq9MYqEvibwZER6v46w%26oh%3D00_AfVI706c03oe_WB-Zdsq4FAEkCIoYvLx02ZTNFTBbZC42g%26oe%3D68A1222D" class="mail-link">
+                <img src="https://cdn-icons-png.flaticon.com/512/561/561127.png" alt="Mail" class="mail-icon" />
+                    bí mật á 
+            </a>
+
+            <div class="controls">
+                <button id="sound-toggle" class="toggle-btn" aria-pressed="false">🎵</button>
+                <button id="flash-toggle" class="toggle-btn" aria-pressed="true">⚡</button>
+            </div>
+            <div id="music-hint" class="hint"></div>
+        </div>
+        <div id="flash-overlay"></div>
+        <audio id="bg-music" loop preload="none">
+            <source src="romantic.mp3" type="audio/mpeg">
+            Trình duyệt của bạn không hỗ trợ phát âm thanh.
+        </audio>
+        <style>
+            .mail-link {
+                display: block;
+                width: 200px;
+                text-decoration: none;
+                transition: transform 0.2s, box-shadow 0.2s;
+            }
+            .mail-link:hover {
+                transform: scale(1.08) rotate(-2deg);
+                box-shadow: 0 8px 32px rgba(231,84,128,0.25);
+            }
+        </style>
+        <script>
+            (function () {
+                const canvas = document.getElementById('rain-canvas');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+
+                let width = 0;
+                let height = 0;
+                let devicePixelRatioValue = window.devicePixelRatio || 1;
+                let drops = [];
+
+                function randomBetween(min, max) {
+                    return Math.random() * (max - min) + min;
+                }
+
+                function createDrop() {
+                    const fallSpeed = randomBetween(400, 900);
+                    const dropLength = randomBetween(10, 25);
+                    const startX = randomBetween(-width * 0.2, width * 1.2);
+                    const startY = randomBetween(-height, 0);
+                    const horizontalDrift = randomBetween(-30, 30);
+                    const lineThickness = randomBetween(0.6, 1.2);
+                    return {
+                        x: startX,
+                        y: startY,
+                        length: dropLength,
+                        speed: fallSpeed,
+                        drift: horizontalDrift,
+                        thickness: lineThickness,
+                    };
+                }
+
+                function resizeCanvas() {
+                    devicePixelRatioValue = window.devicePixelRatio || 1;
+                    width = window.innerWidth;
+                    height = window.innerHeight;
+
+                    canvas.width = Math.floor(width * devicePixelRatioValue);
+                    canvas.height = Math.floor(height * devicePixelRatioValue);
+                    canvas.style.width = width + 'px';
+                    canvas.style.height = height + 'px';
+                    ctx.setTransform(devicePixelRatioValue, 0, 0, devicePixelRatioValue, 0, 0);
+
+                    const dropCount = Math.min(500, Math.floor((width * height) / 5000));
+                    drops = Array.from({ length: dropCount }, createDrop);
+                }
+
+                let lastTime = performance.now();
+                function animate(now) {
+                    const deltaSeconds = Math.min(0.033, (now - lastTime) / 1000);
+                    lastTime = now;
+
+                    ctx.clearRect(0, 0, width, height);
+                    ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+                    ctx.lineCap = 'round';
+
+                    for (let i = 0; i < drops.length; i += 1) {
+                        const d = drops[i];
+                        d.x += d.drift * deltaSeconds;
+                        d.y += d.speed * deltaSeconds;
+
+                        if (d.y - d.length > height) {
+                            d.x = randomBetween(-width * 0.2, width * 1.2);
+                            d.y = randomBetween(-height * 0.2, 0);
+                            d.speed = randomBetween(400, 900);
+                            d.length = randomBetween(10, 25);
+                            d.drift = randomBetween(-30, 30);
+                            d.thickness = randomBetween(0.6, 1.2);
+                        }
+
+                        ctx.lineWidth = d.thickness;
+                        ctx.beginPath();
+                        ctx.moveTo(d.x, d.y - d.length);
+                        ctx.lineTo(d.x, d.y);
+                        ctx.stroke();
+                    }
+
+                    requestAnimationFrame(animate);
+                }
+
+                window.addEventListener('resize', resizeCanvas);
+                resizeCanvas();
+                requestAnimationFrame(animate);
+            })();
+        </script>
+        <script>
+            (function () {
+                const flashOverlay = document.getElementById('flash-overlay');
+                const flashToggleBtn = document.getElementById('flash-toggle');
+                const soundToggleBtn = document.getElementById('sound-toggle');
+                const bgMusic = document.getElementById('bg-music');
+                const musicHint = document.getElementById('music-hint');
+
+                if (bgMusic) {
+                    bgMusic.volume = 0.35;
+                }
+
+                function setHint(message) {
+                    if (!musicHint) return;
+                    musicHint.textContent = message || '';
+                }
+
+                let flashEnabled = true;
+
+                function triggerFlash() {
+                    if (!flashEnabled) return;
+                    if (!flashOverlay) return;
+                    flashOverlay.classList.remove('flash-active');
+                    void flashOverlay.offsetWidth;
+                    flashOverlay.classList.add('flash-active');
+                }
+
+                function scheduleNextFlash() {
+                    const minMs = 6000;
+                    const maxMs = 14000;
+                    const delay = Math.floor(Math.random() * (maxMs - minMs)) + minMs;
+                    setTimeout(() => {
+                        if (flashEnabled) {
+                            triggerFlash();
+                        }
+                        scheduleNextFlash();
+                    }, delay);
+                }
+
+                function toggleSound() {
+                    const isOn = soundToggleBtn.getAttribute('aria-pressed') === 'true';
+                    if (isOn) {
+                        soundToggleBtn.setAttribute('aria-pressed', 'false');
+                        soundToggleBtn.textContent = 'Bật nhạc 🎵';
+                        if (bgMusic) bgMusic.pause();
+                        setHint('');
+                    } else {
+                        soundToggleBtn.setAttribute('aria-pressed', 'true');
+                        soundToggleBtn.textContent = 'Tắt nhạc 🔇';
+                        if (bgMusic) {
+                            bgMusic.play().then(() => setHint('')).catch(() => {
+                                setHint('Chưa phát được nhạc. Kiểm tra kết nối hoặc gửi mình link MP3 khác để gắn.');
+                                soundToggleBtn.setAttribute('aria-pressed', 'false');
+                                soundToggleBtn.textContent = 'Bật nhạc 🎵';
+                            });
+                        }
+                    }
+                }
+
+                function toggleFlash() {
+                    const isOn = flashToggleBtn.getAttribute('aria-pressed') === 'true';
+                    if (isOn) {
+                        flashEnabled = false;
+                        flashToggleBtn.setAttribute('aria-pressed', 'false');
+                        flashToggleBtn.textContent = 'Bật sấm chớp ⚡';
+                    } else {
+                        flashEnabled = true;
+                        flashToggleBtn.setAttribute('aria-pressed', 'true');
+                        flashToggleBtn.textContent = 'Tắt sấm chớp ⚡';
+                    }
+                }
+
+                if (flashToggleBtn) flashToggleBtn.addEventListener('click', toggleFlash);
+                if (soundToggleBtn) soundToggleBtn.addEventListener('click', toggleSound);
+                if (bgMusic) bgMusic.addEventListener('error', () => {
+                    setHint('Không phát được nhạc từ link hiện tại. Bạn có thể cung cấp link MP3 khác để mình gắn.');
+                    soundToggleBtn.setAttribute('aria-pressed', 'false');
+                    soundToggleBtn.textContent = 'Bật nhạc 🎵';
+                });
+
+                scheduleNextFlash();
+            })();
+        </script>
+        <style>
+            .heart-link {
+                display: block;
+                width: 200px;
+                margin: 0 auto;
+                text-decoration: none;
+                transition: transform 0.2s, box-shadow 0.2s;
+            }
+            .heart-link:hover {
+                transform: scale(1.08) rotate(-2deg);
+                box-shadow: 0 8px 32px rgba(231,84,128,0.25);
+            }
+        </style>
+    </body>
+</html> 
